@@ -1,4 +1,7 @@
 import EventList from '@/components/events/event-list';
+import ResultsTitle from '@/components/events/results-title';
+import Button from '@/components/ui/button';
+import ErrorAlert from '@/components/ui/error-alert';
 import { getFilteredEvents } from '@/dummy-data';
 import { useRouter } from 'next/router';
 
@@ -25,7 +28,17 @@ function FilteredEventPage() {
     numMonth < 1 ||
     numMonth > 12
   ) {
-    return <p>유효한 값을 입력하세요.</p>;
+    return (
+      <>
+        <ErrorAlert>
+          <p>유효한 값을 입력하세요.</p>
+        </ErrorAlert>
+
+        <div className='center'>
+          <Button link='/events'>Show All Events</Button>
+        </div>
+      </>
+    );
   }
 
   const filteredEvents = getFilteredEvents({
@@ -34,13 +47,26 @@ function FilteredEventPage() {
   });
 
   if (!filteredEvents || filteredEvents.length === 0) {
-    return <p>입력한 값의 이벤트가 없습니다.</p>;
+    return (
+      <>
+        <ErrorAlert>
+          <p>입력한 값의 이벤트가 없습니다.</p>
+        </ErrorAlert>
+
+        <div className='center'>
+          <Button link='/events'>Show All Events</Button>
+        </div>
+      </>
+    );
   }
 
+  const date = new Date(numYear, numMonth - 1);
+
   return (
-    <div>
+    <>
+      <ResultsTitle date={date} />
       <EventList items={filteredEvents} />
-    </div>
+    </>
   );
 }
 
