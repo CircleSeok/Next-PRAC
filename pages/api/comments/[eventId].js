@@ -29,11 +29,9 @@ function handler(req, res) {
   if (req.method === 'GET') {
     const dummyList = [
       { id: 'c1', name: 'sws', text: '1등' },
-      { id: 'c1', name: 'WS', text: '2등' },
+      { id: 'c2', name: 'WS', text: '2등' },
     ];
-    res.status(200).json({
-      comment: dummyList,
-    });
+    res.status(200).json({ comments: dummyList });
   }
 }
 
