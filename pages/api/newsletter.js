@@ -1,4 +1,6 @@
-function handler(req, res) {
+import { MongoClient } from 'mongodb';
+
+async function handler(req, res) {
   if (req.method === 'POST') {
     const userEmail = req.body.email;
 
@@ -7,7 +9,16 @@ function handler(req, res) {
       return;
     }
 
-    console.log(userEmail);
+    const client = await MongoClient.connect(
+      process.env.NEXT_PUBLIC_MONGODB_URI
+    );
+
+    const db = client.db('events');
+
+    await db.collection('newsletter').insertOne({ email: userEmail });
+
+    client.close();
+
     res.status(201).json({ message: '가입 완료!' });
   }
 }
