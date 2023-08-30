@@ -1,4 +1,5 @@
-import { MongoClient } from 'mongodb';
+import { connectDatabase, insertDocument } from '@/helpers/db-util';
+
 
 async function handler(req, res) {
   if (req.method === 'POST') {
@@ -9,15 +10,26 @@ async function handler(req, res) {
       return;
     }
 
-    const client = await MongoClient.connect(
-      process.env.NEXT_PUBLIC_MONGODB_URI
-    );
+    let client;
 
-    const db = client.db('events');
+    try {
+      client = await connectDatabase();
+    } catch (error) {
+      res.status(500).json({
+        message: '데이터베이스 연결 실패',
+      });
+      return;
+    }
 
-    await db.collection('newsletter').insertOne({ email: userEmail });
-
-    client.close();
+    try {
+      await insertDocument(client, 'newsletter', { email: userEmail });
+      client.close();
+    } catch (error) {
+      res.status(500).json({
+        message: '데이터  삽입 실패',
+      });
+      return;
+    }
 
     res.status(201).json({ message: '가입 완료!' });
   }
