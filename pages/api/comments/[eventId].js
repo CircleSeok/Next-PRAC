@@ -36,11 +36,13 @@ async function handler(req, res) {
     res.status(201).json({ message: '댓글 추가 완료', comment: newComment });
   }
   if (req.method === 'GET') {
-    const dummyList = [
-      { id: 'c1', name: 'sws', text: '1등' },
-      { id: 'c2', name: 'WS', text: '2등' },
-    ];
-    res.status(200).json({ comments: dummyList });
+    const db = client.db('events');
+    const documents = await db
+      .collection('comments')
+      .find()
+      .sort({ _id: -1 })
+      .toArray();
+    res.status(200).json({ comments: documents });
   }
 
   client.close();
